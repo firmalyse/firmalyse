@@ -9,10 +9,10 @@ app = Flask(__name__)
 # Configurations for file upload
 # TODO: is not working, plz make it work lul
 
-UPLOAD_FOLDER = '/analysis_result'
+UPLOAD_FOLDER = 'analysis_result'
 MAX_FIRMWARE_SIZE = 50 * 1024 * 1024 # 50MB
 # Check if analysis_result folder exists. If not, create folder.
-if os.path.exists(UPLOAD_FOLDER):
+if not os.path.exists(UPLOAD_FOLDER):
     print("creating folder")
     os.mkdir(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -30,7 +30,7 @@ def uploadFirmware():
         return render_template('upload.html')
     elif request.method == 'POST':
         firmwareBinary = request.files['firmware_binary']
-        firmwareBinary.save(firmwareBinary.filename)
+        firmwareBinary.save(os.path.join(app.config['UPLOAD_FOLDER'], firmwareBinary.filename))
         analyzer = AnalysisMain(firmwareBinary)
         analyzer.start_analysis()
         return "analyzing firmware..." # temp
