@@ -2,6 +2,8 @@
 Main file for start of analysis (extract firmware, run analysis modules)
 """
 
+from ExtractFirmware import ExtractFirmware
+
 class AnalyzerMain:
 
     def __init__(self, imageFile):
@@ -15,3 +17,7 @@ class AnalyzerMain:
         insert analysis modules here
         TODO: find way to store the analysis results and then render back to user (ASYNC? or just SYNC lol)
         """
+
+        extractFirmware = ExtractFirmware(self.imageFile)
+        extractFirmware.extract()
+        extractedFirmwareDirectory = "analysis_result/_" + self.imageFile.filename + ".extracted"
