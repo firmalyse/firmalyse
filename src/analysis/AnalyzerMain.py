@@ -1,14 +1,14 @@
 """
-Main file for start of analysis (extract binary, run analysis modules)
+Main file for start of analysis (extract firmware, run analysis modules)
 """
 
-class AnalysisMain:
+class AnalyzerMain:
 
-    def __init__(self, binaryFile):
+    def __init__(self, imageFile):
         """
-        binaryFile: firmware binary that user uploaded
+        imageFile: firmware image that user uploaded
         """
-        self.binaryFile = binaryFile
+        self.imageFile = imageFile
 
     def start_analysis(self):
         """
