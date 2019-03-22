@@ -13,9 +13,10 @@ class ExtractFirmware:
     
     def extract(self):
         """
+        Extracts firmware to src/analysis/analysis_result
         Assumes that binwalk and sasquatch has already been installed from the installation script
         """
-        
+
         # Run binwalk for automatic extraction
         imagePath = "analysis_result/" + self.imageFile.filename
         destPath = "analysis_result"

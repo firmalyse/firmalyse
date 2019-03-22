@@ -3,6 +3,7 @@ Main file for start of analysis (extract firmware, run analysis modules)
 """
 
 from ExtractFirmware import ExtractFirmware
+from RunFirmwalker import RunFirmwalker
 
 class AnalyzerMain:
 
@@ -18,6 +19,11 @@ class AnalyzerMain:
         TODO: find way to store the analysis results and then render back to user (ASYNC? or just SYNC lol)
         """
 
+        # Extract firmware image
         extractFirmware = ExtractFirmware(self.imageFile)
         extractFirmware.extract()
-        extractedFirmwareDirectory = "analysis_result/_" + self.imageFile.filename + ".extracted"
+        extractedFirmwareFolder = "_" + self.imageFile.filename + ".extracted"
+
+        # Run firmwalker on extracted firmware
+        runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
+        runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
