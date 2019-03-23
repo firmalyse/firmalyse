@@ -32,3 +32,9 @@ class AnalyzerMain:
 	# Check if weak passwords exist in firmware
 	checkPasswords = CheckPasswords(extractedFirmwareFolder)
 	checkPasswords.runChecks()
+
+def fixPathNames(path):
+	if path[0] == 'd':
+		return path.replace('d', '.', 1)
+	else:
+		return path

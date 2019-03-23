@@ -4,6 +4,8 @@ Checks if any password files found have weak passwords in them
 
 import os
 
+from AnalyzerMain import fixPathNames
+
 class CheckPasswords:
 
 	def __init__(self, firmwareFolder):
@@ -14,6 +16,7 @@ class CheckPasswords:
 
 	def runChecks(self):
 		pwdFiles = self._getPwdFiles()
+		pwdFilePaths = [fixPathNames(path) for path in pwdFiles]
 
 	def _getPwdFiles(self):
 		with open("analysis_result/firmwalkerOutput.txt", "r") as f:
