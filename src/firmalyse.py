@@ -1,13 +1,12 @@
 # Main app
 
 from flask import Flask, render_template, request
-from analysis.AnalyzerMain import AnalysisMain
+from analysis.AnalyzerMain import AnalyzerMain
 import os
 
 app = Flask(__name__)
 
 # Configurations for file upload
-# TODO: is not working, plz make it work lul
 
 UPLOAD_FOLDER = 'analysis_result'
 MAX_FIRMWARE_SIZE = 50 * 1024 * 1024 # 50MB
@@ -29,9 +28,9 @@ def uploadFirmware():
     if request.method == 'GET':
         return render_template('upload.html')
     elif request.method == 'POST':
-        firmwareBinary = request.files['firmware_binary']
-        firmwareBinary.save(os.path.join(app.config['UPLOAD_FOLDER'], firmwareBinary.filename))
-        analyzer = AnalysisMain(firmwareBinary)
+        firmwareImage = request.files['firmware_image']
+        firmwareImage.save(os.path.join(app.config['UPLOAD_FOLDER'], firmwareImage.filename))
+        analyzer = AnalyzerMain(firmwareImage)
         analyzer.start_analysis()
         return "analyzing firmware..." # temp
 
