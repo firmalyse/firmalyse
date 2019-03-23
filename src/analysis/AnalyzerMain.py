@@ -4,6 +4,7 @@ Main file for start of analysis (extract firmware, run analysis modules)
 
 from ExtractFirmware import ExtractFirmware
 from RunFirmwalker import RunFirmwalker
+from HardcodedKeys import HardcodedKeys
 
 class AnalyzerMain:
 
@@ -27,3 +28,6 @@ class AnalyzerMain:
         # Run firmwalker on extracted firmware
         runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
         runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
+
+        hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)
+        hardcodedKeys.run()
