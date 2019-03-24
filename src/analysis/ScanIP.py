@@ -27,4 +27,5 @@ class ScanIP:
 
         output = []
         for line in Firm_lines:
+            if line in IP_lines:
                 output.append(line)
