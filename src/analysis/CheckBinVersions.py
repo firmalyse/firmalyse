@@ -9,6 +9,7 @@ class CheckBinVersions:
     def __init__(self, firmwareFolder):
         self.firmwareFolder = firmwareFolder
         self.ssh = ''
+        self.dropbear = ''
         self.busyBox = ''
         self.telnet = ''
         self.openssl = ''
@@ -19,6 +20,7 @@ class CheckBinVersions:
         self.checkOpenSSL()
         self.checkTelnet()
         self.checkBusyBox()
+        self.checkDropbear()
 
     
     def checkOpenSSL(self):
@@ -49,7 +51,7 @@ class CheckBinVersions:
                     issues['Outdated'] = True
                     break
 
-        print("OpenSSL: {}".format(issues))
+        # print("OpenSSL: {}".format(issues))
 
         return issues
     
@@ -71,7 +73,7 @@ class CheckBinVersions:
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split(' ')[1].strip('v') # Just take the 1st result of grep as the target version string
 
-        print("Version caught: {}".format(versionNum))
+        # print("Version caught: {}".format(versionNum))
         
         # Check if the version of BusyBox is vulnerable
         with open('analysis/data/BusyBoxVulnerableVersions', 'r') as vulnerableVersions:
@@ -80,21 +82,54 @@ class CheckBinVersions:
                     issues['VulnerableVersion'] = True
                     break
         
-        print("BusyBox: {}".format(issues))
+        # print("BusyBox: {}".format(issues))
         
+        return issues
+
+    def checkDropbear(self):
+        """
+        Checks if there is a vulnerable version of Dropbear in the firmware.
+        """
+
+        issues = {'Present': False, 'VulnerableVersion': False}
+
+        if self.dropbear == '':
+            return issues
+        
+        issues['Present'] = True
+
+        relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.dropbear
+        keywordsArray = subprocess.check_output('strings ' + relativePath +\
+                                                 '| grep -P \"^SSH-([0-9])+\.([0-9]+)-dropbear_([0-9])+\.([0-9])+\"',\
+                                                 shell=True).split("\n")
+        keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
+        versionNum = keywordsArray[0].split('_')[1] # Just take the 1st result of grep as the target version string
+
+        # print("Version caught: {}".format(versionNum))
+
+        # Check if the version of Dropbear is vulnerable
+        with open('analysis/data/DropbearVulnerableVersions', 'r') as vulnerableVersions:
+            for line in vulnerableVersions:
+                if versionNum in line:
+                    issues['VulnerableVersion'] = True
+                    break
+        
+        # print("Dropbear: {}".format(issues))
+
         return issues
 
     def checkTelnet(self):
         """
         Checks if telnet is present in the firmware.
+        Note: telnet inherently insecure (plaintext communication) and will be flagged if present.
         """
 
-        issues = {'InsecureTelnetPresent': False}
+        issues = {'Present': False}
 
         if self.telnet != '':
-            issues['InsecureTelnetPresent'] = True
+            issues['Present'] = True
 
-        print("Telnet: {}".format(issues))
+        # print("Telnet: {}".format(issues))
 
         return issues
 
@@ -107,6 +142,8 @@ class CheckBinVersions:
             for line in firmwalker:
                 if line.startswith('##################################### ssh'):
                     self.ssh = next(firmwalker).strip('d/').strip('\n')
+                elif line.startswith('##################################### dropbear'):
+                    self.dropbear = next(firmwalker).strip('d/').strip('\n')
                 elif line.startswith('##################################### busybox'):
                     self.busyBox = next(firmwalker).strip('d/').strip('\n')
                 elif line.startswith('##################################### telnet'):
@@ -115,7 +152,8 @@ class CheckBinVersions:
                     self.openssl = next(firmwalker).strip('d/').strip('\n')
                 
         # test
-        print("ssh: {}".format(self.ssh))
-        print("busybox: {}".format(self.busyBox))
-        print("telnet: {}".format(self.telnet))
-        print("openssl: {}".format(self.openssl))
+        # print("ssh: {}".format(self.ssh))
+        # print("dropbear: {}".format(self.dropbear))
+        # print("busybox: {}".format(self.busyBox))
+        # print("telnet: {}".format(self.telnet))
+        # print("openssl: {}".format(self.openssl))
