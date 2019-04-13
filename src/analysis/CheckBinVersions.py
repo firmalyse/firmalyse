@@ -19,7 +19,7 @@ class CheckBinVersions:
             'name': 'Checks for insecure/outdated components in the firmware',
             'description': 'Use of deprecated or insecure software components can allow the device to be compromised. \
                             This module checks the versions of important components in the firmware and determine if their \
-                            versions are known to be vulnerable or outdated',
+                            versions are known to be vulnerable or outdated.',
             'issues': []
         }
 
