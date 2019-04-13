@@ -8,28 +8,36 @@ class CheckBinVersions:
 
     def __init__(self, firmwareFolder):
         self.firmwareFolder = firmwareFolder
+
         self.ssh = ''
         self.dropbear = ''
         self.busyBox = ''
         self.telnet = ''
         self.openssl = ''
 
+        self.result = {
+            'name': 'Checks for insecure/outdated components in the firmware',
+            'description': 'Use of deprecated or insecure software components can allow the device to be compromised. \
+                            This module checks the versions of important components in the firmware and determine if their \
+                            versions are known to be vulnerable or outdated',
+            'issues': []
+        }
+
     def run(self):
         self.findFiles()
 
-        self.checkOpenSSL()
-        self.checkTelnet()
-        self.checkBusyBox()
-        self.checkDropbear()
+        self.result['issues'].append(self.checkOpenSSL())
+        self.result['issues'].append(self.checkTelnet())
+        self.result['issues'].append(self.checkBusyBox())
+        self.result['issues'].append(self.checkDropbear())      
 
-    
     def checkOpenSSL(self):
         """
         Checks if the OpenSSL version is outdated or vulnerable
         to the heartbleed attack.
         """
         
-        issues = {'Present': False, 'Heartbleed': False, 'Outdated': False}
+        issues = {'issueName': 'OpenSSL', 'Present': False, 'Heartbleed': False, 'Outdated': False, 'Version': ''}
 
         if self.openssl == '': 
             return issues
@@ -39,6 +47,7 @@ class CheckBinVersions:
         relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.openssl
         versionStr = subprocess.check_output('strings -n 10 ' + relativePath + '| grep \"OpenSSL\"', shell=True).split('\n')[-2]
         versionNum = versionStr.split(' ')[1]
+        issues['Version'] = versionNum
 
         # Check if the version of OpenSSL is vulnerable to the heartbleed attack
         if '1.0.1' in versionNum:
@@ -60,7 +69,7 @@ class CheckBinVersions:
         Checks if there is a vulnerable version of BusyBox in the firmware.
         """
 
-        issues = {'Present': False, 'VulnerableVersion': False}
+        issues = {'issueName': 'BusyBox', 'Present': False, 'VulnerableVersion': False, 'Version': ''}
 
         if self.busyBox == '':
             return issues
@@ -72,17 +81,14 @@ class CheckBinVersions:
                         .split('\n')
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split(' ')[1].strip('v') # Just take the 1st result of grep as the target version string
+        issues['Version'] = versionNum
 
-        # print("Version caught: {}".format(versionNum))
-        
         # Check if the version of BusyBox is vulnerable
         with open('analysis/data/BusyBoxVulnerableVersions', 'r') as vulnerableVersions:
             for line in vulnerableVersions:
                 if versionNum in line:
                     issues['VulnerableVersion'] = True
                     break
-        
-        # print("BusyBox: {}".format(issues))
         
         return issues
 
@@ -91,7 +97,7 @@ class CheckBinVersions:
         Checks if there is a vulnerable version of Dropbear in the firmware.
         """
 
-        issues = {'Present': False, 'VulnerableVersion': False}
+        issues = {'issueName': 'Dropbear', 'Present': False, 'VulnerableVersion': False, 'Version': ''}
 
         if self.dropbear == '':
             return issues
@@ -104,8 +110,7 @@ class CheckBinVersions:
                                                  shell=True).split("\n")
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split('_')[1] # Just take the 1st result of grep as the target version string
-
-        # print("Version caught: {}".format(versionNum))
+        issues['Version'] = versionNum
 
         # Check if the version of Dropbear is vulnerable
         with open('analysis/data/DropbearVulnerableVersions', 'r') as vulnerableVersions:
@@ -114,8 +119,6 @@ class CheckBinVersions:
                     issues['VulnerableVersion'] = True
                     break
         
-        # print("Dropbear: {}".format(issues))
-
         return issues
 
     def checkTelnet(self):
@@ -124,12 +127,10 @@ class CheckBinVersions:
         Note: telnet inherently insecure (plaintext communication) and will be flagged if present.
         """
 
-        issues = {'Present': False}
+        issues = {'issueName': 'telnet', 'Present': False}
 
         if self.telnet != '':
             issues['Present'] = True
-
-        # print("Telnet: {}".format(issues))
 
         return issues
 
@@ -150,10 +151,3 @@ class CheckBinVersions:
                     self.telnet = next(firmwalker).strip('d/').strip('\n')
                 elif line.startswith('##################################### openssl'):
                     self.openssl = next(firmwalker).strip('d/').strip('\n')
-                
-        # test
-        # print("ssh: {}".format(self.ssh))
-        # print("dropbear: {}".format(self.dropbear))
-        # print("busybox: {}".format(self.busyBox))
-        # print("telnet: {}".format(self.telnet))
-        # print("openssl: {}".format(self.openssl))
