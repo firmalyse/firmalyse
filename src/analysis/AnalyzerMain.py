@@ -13,6 +13,7 @@ class AnalyzerMain:
         imageFile: firmware image that user uploaded
         """
         self.imageFile = imageFile
+        self.analysisResult = []
 
     def start_analysis(self):
         """
@@ -32,3 +33,4 @@ class AnalyzerMain:
         # Run CheckBinVersions module
         checkBinVersions = CheckBinVersions(extractedFirmwareFolder)
         checkBinVersions.run()
+        self.analysisResult.append(checkBinVersions.result)
