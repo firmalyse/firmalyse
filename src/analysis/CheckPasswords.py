@@ -45,8 +45,8 @@ class CheckPasswords:
 		pwdListDir = "./analysis/pwdlists/"
 		defaultPwdListPath = "default-passwords.txt"
 		commonPwdListPath = "common-passwords.txt"
-
 		issues = {'issueName': 'Default Passwords', 'Present': False, 'Usernames': []}
+
 		subprocess.check_output(["john --wordlist=" + pwdListDir + defaultPwdListPath + " " + path], shell=True)
 		proc = subprocess.check_output(["john --show " + path + " | grep -P \"^([0-9a-zA-Z]*:)+\""], shell=True)
 		if len(proc) == 0:
