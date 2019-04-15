@@ -138,6 +138,35 @@
                                 </ul>
                             </td>
                         {% endif %}
+	    
+	    		<!-- AVScanFirmware: ClamAV -->
+                        {% if issue.issueName == 'Malware' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Malware detected: {{ issue.Definition }}</p>
+                            </td>
+                        {% endif %}
+
+
+			<!-- ScanIP: Hardcoded IP -->
+                        {% if issue.issueName == 'Hardcoded IPs' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+			    <ul class="list-unstyled">
+
+				{% for ip in issue.List %}
+
+					<li> {{ ip }} </li>
+
+				{% endfor %}
+
+			    </ul>
+			    </td>
+                        {% endif %}
                         
                     </tr>
                 {% endfor %}
