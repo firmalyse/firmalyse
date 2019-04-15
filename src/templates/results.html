@@ -28,7 +28,8 @@
                                 {{ issue.issueName }}
                             </td>
                             <td>
-                                <p>The following users have weak default passwords:</p><br>
+                                <p>The following users have weak default passwords. This exposes your device to external attackers that 
+				may obtain control of your device. Consider changing these passwords ASAP.</p><br>
 				<ul class="list-unstyled">
 				{% for user in issue.Usernames %}
 					<li> {{ user }} </li>
