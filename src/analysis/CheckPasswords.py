@@ -69,10 +69,10 @@ class CheckPasswords:
 				pwdFiles.append(line)
 				line = f.readline().strip()
 			
-		return [fixPathName(path) for path in pwdFiles]
+		return [self.fixPathName(path) for path in pwdFiles]
 
-def fixPathName(path):
-        if path[0] == 'd':
-                return path.replace('d', '.', 1)
-        else:
-                return path
+	def fixPathName(self, path):
+        	if path[0] == 'd':
+                	return path.replace('d', '.', 1)
+        	else:
+                	return path
