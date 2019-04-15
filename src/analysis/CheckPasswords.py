@@ -5,8 +5,6 @@ Checks if any password files found have weak passwords in them
 import os
 import subprocess
 
-from AnalysisUtils import fixPathName
-
 class CheckPasswords:
 
 	def __init__(self, firmwareFolder):
@@ -32,7 +30,7 @@ class CheckPasswords:
 		# os.chdir("./analysis_result/" + self.firmwareFolder)
 		# for path in pwdFileDirs:
 		#	self._runJohn(path)
-		examplePath = "./analysis/pwdlists/example_shadow.txt"
+		examplePath = "./analysis/data/example_shadow.txt"
 		self.result['issues'].append(self._runJohn(examplePath))		
 
 		# reset working directory	
@@ -42,12 +40,11 @@ class CheckPasswords:
 		"""
 		current directory: src/analysis_result/<firmware folder>
 		"""
-		pwdListDir = "./analysis/pwdlists/"
-		defaultPwdListPath = "default-passwords.txt"
-		commonPwdListPath = "common-passwords.txt"
+		pwdlistdir = "./analysis/data/"
+		pwdlist = "default-passwords.txt"
 		issues = {'issueName': 'Default Passwords', 'Present': False, 'Usernames': []}
 
-		subprocess.check_output(["john --wordlist=" + pwdListDir + defaultPwdListPath + " " + path], shell=True)
+		subprocess.check_output(["john --wordlist=" + pwdlistdir + pwdlist + " " + path], shell=True)
 		proc = subprocess.check_output(["john --show " + path + " | grep -P \"^([0-9a-zA-Z]*:)+\""], shell=True)
 		if len(proc) == 0:
 			return issues
@@ -74,4 +71,8 @@ class CheckPasswords:
 			
 		return [fixPathName(path) for path in pwdFiles]
 
-
+def fixPathName(path):
+        if path[0] == 'd':
+                return path.replace('d', '.', 1)
+        else:
+                return path
