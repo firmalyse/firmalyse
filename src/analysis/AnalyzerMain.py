@@ -31,4 +31,4 @@ class AnalyzerMain:
 
 	# Check if weak passwords exist in firmware
 	checkPasswords = CheckPasswords(extractedFirmwareFolder)
-	checkPasswords.runChecks()
+	checkPasswords.run()

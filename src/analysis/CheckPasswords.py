@@ -20,7 +20,7 @@ class CheckPasswords:
 			'issues': []
 		}
 
-	def runChecks(self):
+	def run(self):
 		pwdFileDirs = self._getPwdFileDirs()
 
                 """
