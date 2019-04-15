@@ -4,6 +4,8 @@ Main file for start of analysis (extract firmware, run analysis modules)
 
 from ExtractFirmware import ExtractFirmware
 from RunFirmwalker import RunFirmwalker
+from HardcodedKeys import HardcodedKeys
+from CheckBinVersions import CheckBinVersions
 
 class AnalyzerMain:
 
@@ -12,6 +14,7 @@ class AnalyzerMain:
         imageFile: firmware image that user uploaded
         """
         self.imageFile = imageFile
+        self.analysisResult = []
 
     def start_analysis(self):
         """
@@ -27,3 +30,13 @@ class AnalyzerMain:
         # Run firmwalker on extracted firmware
         runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
         runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
+
+        # Run HardcodedKeys module
+        hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)
+        hardcodedKeys.run()
+        self.analysisResult.append(hardcodedKeys.result)
+
+        # Run CheckBinVersions module
+        checkBinVersions = CheckBinVersions(extractedFirmwareFolder)
+        checkBinVersions.run()
+        self.analysisResult.append(checkBinVersions.result)
