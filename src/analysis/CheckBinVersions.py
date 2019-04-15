@@ -45,8 +45,10 @@ class CheckBinVersions:
         issues['Present'] = True
 
         relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.openssl
-        versionStr = subprocess.check_output('strings -n 10 ' + relativePath + '| grep \"OpenSSL\"', shell=True).split('\n')[-2]
-        versionNum = versionStr.split(' ')[1]
+        keywordsArray = subprocess.check_output('strings ' + relativePath + '| grep -P \"^OpenSSL ([0-9])+\.([0-9])+\.([a-z0-9])+\"',\
+                                             shell=True).split('\n')
+        keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
+        versionNum = keywordsArray[0].split(' ')[1]
         issues['Version'] = versionNum
 
         # Check if the version of OpenSSL is vulnerable to the heartbleed attack
