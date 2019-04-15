@@ -1,1 +1,10 @@
 /__pycache__
+
+# firmwalker directory
+firmwalker
+
+# output directory
+analysis_result
+
+*.pyc
+

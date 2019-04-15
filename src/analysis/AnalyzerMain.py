@@ -4,6 +4,7 @@ Main file for start of analysis (extract firmware, run analysis modules)
 
 from ExtractFirmware import ExtractFirmware
 from RunFirmwalker import RunFirmwalker
+from CheckPasswords import CheckPasswords
 from HardcodedKeys import HardcodedKeys
 from CheckBinVersions import CheckBinVersions
 
@@ -30,6 +31,11 @@ class AnalyzerMain:
         # Run firmwalker on extracted firmware
         runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
         runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
+
+	# Check if weak passwords exist in firmware
+	checkPasswords = CheckPasswords(extractedFirmwareFolder)
+	checkPasswords.run()
+	self.analysisResult.append(checkPasswords.result)
 
         # Run HardcodedKeys module
         hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)

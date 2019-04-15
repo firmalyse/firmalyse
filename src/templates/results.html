@@ -22,6 +22,22 @@
                     <tr>
                         <!-- render issue rows based on the analysis type-->
 
+			<!-- CheckPasswords: Default Passwords -->
+                        {% if issue.issueName == 'Default Passwords' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>The following users have weak default passwords:</p><br>
+				<ul class="list-unstyled">
+				{% for user in issue.Usernames %}
+					<li> {{ user }} </li>
+				{% endfor %}
+				</ul>
+                                </td>
+                            </td>
+                        {% endif %}
+
                         <!-- CheckBinVersions: OpenSSL -->
                         {% if issue.issueName == 'OpenSSL' and issue.Present %}
                             <td>
