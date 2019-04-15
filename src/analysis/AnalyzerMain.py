@@ -7,6 +7,8 @@ from RunFirmwalker import RunFirmwalker
 from CheckPasswords import CheckPasswords
 from HardcodedKeys import HardcodedKeys
 from CheckBinVersions import CheckBinVersions
+from AVScanFirmware import AVScanFirmware
+from ScanIP import ScanIP
 
 class AnalyzerMain:
 
@@ -46,3 +48,13 @@ class AnalyzerMain:
         checkBinVersions = CheckBinVersions(extractedFirmwareFolder)
         checkBinVersions.run()
         self.analysisResult.append(checkBinVersions.result)
+	
+	#Run AVScanFirmware module
+	scanFirmware = AVScanFirmware(self.imageFile, extractedFirmwareFolder)
+	scanFirmware.run()
+	self.analysisResult.append(scanFirmware.result) 
+
+	#Run ScanIP module
+	scanIPAdd = ScanIP(extractedFirmwareFolder)
+	scanIPAdd.run()
+        self.analysisResult.append(scanIPAdd.result) 
