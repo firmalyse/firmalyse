@@ -15,6 +15,13 @@ class CheckPasswords:
 		"""
 		self.firmwareFolder = firmwareFolder
 
+		self.result = {
+			'name': 'Checks for weak passwords in the firmware',
+			'description': 'Weak passwords included in firmware make devices vulnerable and may allow them to be compromised. \
+			This module checks for existing password hashes in the firmware and compares them against lists of common/default passwords.',
+			'issues': []
+		}
+
 	def runChecks(self):
 		pwdFileDirs = self._getPwdFileDirs()
 
@@ -22,37 +29,41 @@ class CheckPasswords:
                 example path: ./squashfs-root/etc/passwd
                 current directory: src
                 """
-		os.chdir("./analysis_result/" + self.firmwareFolder)
-		for path in pwdFileDirs:
-			self._runJohn(path)
-	
+		# os.chdir("./analysis_result/" + self.firmwareFolder)
+		# for path in pwdFileDirs:
+		#	self._runJohn(path)
+		examplePath = "./analysis/pwdlists/example_shadow.txt"
+		self.result['issues'].append(self._runJohn(examplePath))		
+
 		# reset working directory	
-		os.chdir("../..")
+		# os.chdir("../..")
 
 	def _runJohn(self, path):
 		"""
 		current directory: src/analysis_result/<firmware folder>
 		"""
-		pwdlistDir = "../../analysis/pwdlists"
-		defaultPwdListPath = "/default-passwords.txt"
-		commonPwdListPath = "/common-passwords.txt"
-	
-		proc = subprocess.Popen(["john", ])	
+		pwdListDir = "./analysis/pwdlists/"
+		defaultPwdListPath = "default-passwords.txt"
+		commonPwdListPath = "common-passwords.txt"
+
+		issues = {'issueName': 'Default Passwords', 'Present': False, 'Usernames': []}
+		subprocess.check_output(["john --wordlist=" + pwdListDir + defaultPwdListPath + " " + path], shell=True)
+		proc = subprocess.check_output(["john --show " + path + " | grep -P \"^([0-9a-zA-Z]*:)+\""], shell=True)
+		if len(proc) == 0:
+			return issues
+
+		issues['Present'] = True
+		for user in proc.splitlines():
+			username = user.split(":")[0]
+			issues['Usernames'].append(username)
+
+		return issues
 
 	def _getPwdFileDirs(self):
 		with open("analysis_result/firmwalkerOutput.txt", "r") as f:
 			pwdFiles = list()
 
 			line = f.readline().strip()
-			# read till start of list
-			while not "##################################### passwd" in line:
-				line = f.readline().strip()
-			line = f.readline().strip()
-
-			while line != "":
-				pwdFiles.append(line)
-				line = f.readline().strip()
-			
                         while not "##################################### shadow" in line:
 				line = f.readline().strip()
 			line = f.readline().strip()
@@ -61,15 +72,6 @@ class CheckPasswords:
 				pwdFiles.append(line)
 				line = f.readline().strip()
 			
-			while not "##################################### *.psk" in line:
-				line = f.readline().strip()
-			line = f.readline().strip()
-
-			while line != "":
-				pwdFiles.append(line)
-				line = f.readline().strip()
-
-
 		return [fixPathName(path) for path in pwdFiles]
 
 
