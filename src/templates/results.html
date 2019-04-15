@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <title>Firmware Analysis Results</title>
+        <!-- Bootstrap-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+        <h1>Firmware Analysis Results</h1>
+        <br>
+        {% for result in results %}
+            <h2>{{ result.name }}</h2>
+            <p class="lead">{{ result.description }}</p>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Issue</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                {% for issue in result.issues %}
+                    <tr>
+                        <!-- render issue rows based on the analysis type-->
+
+                        <!-- CheckBinVersions: OpenSSL -->
+                        {% if issue.issueName == 'OpenSSL' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Version detected: {{ issue.Version }}</p><br>
+                                <ul class="list-unstyled">
+                                    {% if issue.Heartbleed %}
+                                        <li>Vulnerable version</li>
+                                        <ul><li>The version of OpenSSL used contains the Heartbleed bug which can cause attackers 
+                                        to obtain sensitive information. OpenSSL must be updated on your firmware ASAP. </li></ul>
+                                    {% endif %}
+                                </ul>
+                                <ul class="list-unstyled">
+                                    {% if issue.Outdated %}
+                                        <li>Outdated version</li>
+                                        <ul><li>The version of OpenSSL used is outdated and no longer supported. 
+                                        Hence, there is greater risk of security attacks since older versions tend to be less secure. 
+                                        OpenSSL should be updated to the newer versions. </li></ul>
+                                    {% endif %}
+                                </ul>
+                                </td>
+                            </td>
+                        {% endif %}
+
+                        <!-- CheckBinVersions: telnet -->
+                        {% if issue.issueName == 'telnet' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Presence of telnet is detected in the firmware. Telnet is inherently insecure since it exposes your data
+                                to attackers in plaintext. The firmware should be using a more secure alternative like SSH (or Dropbear). </p>
+                            </td>
+                        {% endif %}
+
+                        <!-- CheckBinVersions: BusyBox -->
+                        {% if issue.issueName == 'BusyBox' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Version detected: {{ issue.Version }}</p>
+                                <ul class="list-unstyled">
+                                    {% if issue.VulnerableVersion %}
+                                        <li>Vulnerable version</li>
+                                        <ul><li>The version of BusyBox is known to be vulnerable to high risk attacks. 
+                                        BusyBox must be updated to a secure version on your firmware ASAP. </li></ul>
+                                    {% endif %}
+                                </ul>
+                            </td>
+                        {% endif %}
+
+                        <!-- CheckBinVersions: Dropbear -->
+                        {% if issue.issueName == 'Dropbear' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Version detected: {{ issue.Version }}</p>
+                                <ul class="list-unstyled">
+                                    {% if issue.VulnerableVersion %}
+                                        <li>Vulnerable version</li>
+                                        <ul><li>The version of Dropbear is known to be vulnerable to high risk attacks. 
+                                        Dropbear must be updated to a secure version on your firmware ASAP. </li></ul>
+                                    {% endif %}
+                                </ul>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+        </div>
+
+        <!-- Bootstrap-->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>

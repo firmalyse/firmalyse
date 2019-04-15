@@ -5,6 +5,8 @@ Main file for start of analysis (extract firmware, run analysis modules)
 from ExtractFirmware import ExtractFirmware
 from RunFirmwalker import RunFirmwalker
 from CheckPasswords import CheckPasswords
+from HardcodedKeys import HardcodedKeys
+from CheckBinVersions import CheckBinVersions
 
 class AnalyzerMain:
 
@@ -13,6 +15,7 @@ class AnalyzerMain:
         imageFile: firmware image that user uploaded
         """
         self.imageFile = imageFile
+        self.analysisResult = []
 
     def start_analysis(self):
         """
@@ -32,3 +35,13 @@ class AnalyzerMain:
 	# Check if weak passwords exist in firmware
 	checkPasswords = CheckPasswords(extractedFirmwareFolder)
 	checkPasswords.run()
+	self.analysisResult.append(checkPasswords.result)
+
+        # Run HardcodedKeys module
+        hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)
+        hardcodedKeys.run()
+
+        # Run CheckBinVersions module
+        checkBinVersions = CheckBinVersions(extractedFirmwareFolder)
+        checkBinVersions.run()
+        self.analysisResult.append(checkBinVersions.result)
