@@ -45,8 +45,13 @@ class CheckBinVersions:
         issues['Present'] = True
 
         relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.openssl
-        keywordsArray = subprocess.check_output('strings ' + relativePath + '| grep -P \"^OpenSSL ([0-9])+\.([0-9])+\.([a-z0-9])+\"',\
+        try:
+            keywordsArray = subprocess.check_output('strings ' + relativePath + '| grep -P \"^OpenSSL ([0-9])+\.([0-9])+\.([a-z0-9])+\"',\
                                              shell=True).split('\n')
+        except subprocess.CalledProcessError as e:
+            issues['Version'] = 'Cannot be detected'
+            return issues
+
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split(' ')[1]
         issues['Version'] = versionNum
@@ -79,8 +84,13 @@ class CheckBinVersions:
         issues['Present'] = True
 
         relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.busyBox
-        keywordsArray = subprocess.check_output('strings ' + relativePath + '| grep -P \"^BusyBox v([0-9])+\.([0-9])+.+\"', shell=True)\
+        try:
+            keywordsArray = subprocess.check_output('strings ' + relativePath + '| grep -P \"^BusyBox v([0-9])+\.([0-9])+.+\"', shell=True)\
                         .split('\n')
+        except subprocess.CalledProcessError as e:
+            issues['Version'] = 'Cannot be detected'
+            return issues
+
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split(' ')[1].strip('v') # Just take the 1st result of grep as the target version string
         issues['Version'] = versionNum
@@ -107,9 +117,14 @@ class CheckBinVersions:
         issues['Present'] = True
 
         relativePath = 'analysis_result/' + self.firmwareFolder + '/' + self.dropbear
-        keywordsArray = subprocess.check_output('strings ' + relativePath +\
-                                                 '| grep -P \"^SSH-([0-9])+\.([0-9]+)-dropbear_([0-9])+\.([0-9])+\"',\
-                                                 shell=True).split("\n")
+        try:
+            keywordsArray = subprocess.check_output('strings ' + relativePath +\
+                                                    '| grep -P \"^SSH-([0-9])+\.([0-9]+)-dropbear_([0-9])+\.([0-9])+\"',\
+                                                    shell=True).split("\n")
+        except subprocess.CalledProcessError as e:
+            issues['Version'] = 'Cannot be detected'
+            return issues
+            
         keywordsArray = filter(None, keywordsArray) # Filter out empty string since subprocess.check_output throws out extra newline
         versionNum = keywordsArray[0].split('_')[1] # Just take the 1st result of grep as the target version string
         issues['Version'] = versionNum
