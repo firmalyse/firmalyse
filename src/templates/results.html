@@ -92,6 +92,37 @@
                                 </ul>
                             </td>
                         {% endif %}
+
+                        <!-- HardcodedKeys: SSH private keys -->
+                        {% if issue.issueName == 'SSH private keys' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Presence of hardcoded SSH private keys detected:</p>
+                                <ul>
+                                    {% for privKey in issue.PrivateKeys %}
+                                        <li>{{ privKey }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        {% endif %}
+
+                        <!-- HardcodedKeys: SSL private keys -->
+                        {% if issue.issueName == 'SSL private keys' and issue.Present %}
+                            <td>
+                                {{ issue.issueName }}
+                            </td>
+                            <td>
+                                <p>Presence of hardcoded SSL private keys detected:</p>
+                                <ul>
+                                    {% for privKey in issue.PrivateKeys %}
+                                        <li>{{ privKey }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        {% endif %}
+                        
                     </tr>
                 {% endfor %}
             </table>

@@ -8,22 +8,19 @@ class HardcodedKeys:
 
     def __init__(self, firmwareFolder):
         self.firmwareFolder = firmwareFolder
+        self.result = {
+            'name': 'Checks for hardcoded cryptographic keys in the firmware',
+            'description': 'The use of hardcoded cryptographic keys are often reused by manufacturers of IoT devices. \
+                            Any attacker that posseses these keys can use them to hijack the communication \
+                            made by these IoT devices. These module thus scans for the presence of such hardcoded keys\
+                            used as SSH host keys or X.509 HTTPS certificate',
+            'issues': []
+        }        
 
     def run(self):
         sslFilesExtracted, sshFilesExtracted = self.extractFiles()
-        sslFilesResult = self.verifySSLKeys(sslFilesExtracted)
-        sshFilesResult = self.verifySSHKeys(sshFilesExtracted)
-        
-        # Test
-        print("result:")
-        print(sslFilesResult)
-        print(sshFilesResult)
-
-        self.processResult(sslFilesResult, sshFilesResult)
-
-    def processResult(self, sslFilesResult, sshFilesResult):
-        #TODO: JSON result
-        return
+        self.result['issues'].append(self.verifySSLKeys(sslFilesExtracted))
+        self.result['issues'].append(self.verifySSHKeys(sshFilesExtracted))
 
     def verifySSHKeys(self, sshFiles):
         """
@@ -33,6 +30,8 @@ class HardcodedKeys:
         are embded in headers containing "PRIVATE",
         and Dropbear private key file names usually contains "host_key".
         """
+        
+        issues = {'issueName': 'SSH private keys', 'Present': False, 'PrivateKeys': []}
 
         positiveFiles = []
         for filePath in sshFiles:
@@ -40,11 +39,19 @@ class HardcodedKeys:
                 positiveFiles.append(filePath)
             elif "id_rsa" or "id_dsa" in filePath: # SSH keys
                 if ".pub" not in filePath: # Not public keys
-                    with open('analysis_result/' + self.firmwareFolder + '/' + filePath, 'r') as targetFile:
-                        if targetFile.read().find("PRIVATE") != -1:
-                            positiveFiles.append(filePath)
+                    try:
+                        with open('analysis_result/' + self.firmwareFolder + '/' + filePath, 'r') as targetFile:
+                            print("Checking {}".format(filePath))
+                            if targetFile.read().find("PRIVATE") != -1:
+                                positiveFiles.append(filePath)
+                    except IOError:
+                        continue
+
+        if len(positiveFiles) > 0:
+            issues['Present'] = True
+            issues['PrivateKeys'] = list(positiveFiles)
         
-        return positiveFiles
+        return issues
 
     def verifySSLKeys(self, sslFiles):
         """
@@ -53,34 +60,33 @@ class HardcodedKeys:
         Uses the fact that SSL private keys are embded in between headers that contains "PRIVATE"
         """
 
-        postiveFiles = []
+        issues = {'issueName': 'SSL private keys', 'Present': False, 'PrivateKeys': []}
+
+        positiveFiles = []
         for filePath in sslFiles:
-            with open('analysis_result/' + self.firmwareFolder + '/' + filePath, 'r') as targetFile:
-                if targetFile.read().find("PRIVATE") != -1:
-                    postiveFiles.append(filePath)
+            try:
+                with open('analysis_result/' + self.firmwareFolder + '/' + filePath, 'r') as targetFile:
+                    if targetFile.read().find("PRIVATE") != -1:
+                        positiveFiles.append(filePath)
+            except IOError:
+                continue
         
-        return postiveFiles
+        if len(positiveFiles) > 0:
+            issues['Present'] = True
+            issues['PrivateKeys'] = list(positiveFiles)
+        
+        return issues
 
     def extractFiles(self):
 
         # SSL and SSH files keywords from firmwalker
         with open('analysis/data/HardcodedSSLKeys.txt', 'r') as sslKeywordsFile:
-            sslKeywords = map(lambda keyword: keyword.strip('\n'), sslKeywordsFile.readlines())
+            sslKeywords = map(lambda keyword: keyword.strip('\n').strip('\r'), sslKeywordsFile.readlines())
         with open('analysis/data/HardcodedSSHKeys.txt', 'r') as sshKeywordsFile:
-            sshKeywords = map(lambda keyword: keyword.strip('\n'), sshKeywordsFile.readlines())
-
-        # Test
-        print("keywords:")
-        print(sslKeywords)
-        print(sshKeywords)
+            sshKeywords = map(lambda keyword: keyword.strip('\n').strip('\r'), sshKeywordsFile.readlines())
 
         sslFiles = self.findFiles(sslKeywords)
         sshFiles = self.findFiles(sshKeywords)
-
-        # Test
-        print("files found:")
-        print(sslFiles)
-        print(sshFiles)
 
         return sslFiles, sshFiles
     
@@ -102,5 +108,6 @@ class HardcodedKeys:
                             else:
                                 break
                 firmwalker.seek(0)
+
         return files
             

@@ -34,6 +34,7 @@ class AnalyzerMain:
         # Run HardcodedKeys module
         hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)
         hardcodedKeys.run()
+        self.analysisResult.append(hardcodedKeys.result)
 
         # Run CheckBinVersions module
         checkBinVersions = CheckBinVersions(extractedFirmwareFolder)
