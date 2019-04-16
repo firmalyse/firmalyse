@@ -32,10 +32,10 @@ class AnalyzerMain:
         runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
         runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
 
-	# Check if weak passwords exist in firmware
-	checkPasswords = CheckPasswords(extractedFirmwareFolder)
-	checkPasswords.run()
-	self.analysisResult.append(checkPasswords.result)
+        # Check if weak passwords exist in firmware
+        checkPasswords = CheckPasswords(extractedFirmwareFolder)
+        checkPasswords.run()
+        self.analysisResult.append(checkPasswords.result)
 
         # Run HardcodedKeys module
         hardcodedKeys = HardcodedKeys(extractedFirmwareFolder)
