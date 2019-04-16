@@ -34,7 +34,7 @@ class AnalyzerMain:
         runFirmwalker = RunFirmwalker(extractedFirmwareFolder)
         runFirmwalker.run() # firmwalkeroutput is in src/analysis_result/firmwalkerOutput.txt
 
-        # Check if weak passwords exist in firmware
+        # Run CheckPasswords module
         checkPasswords = CheckPasswords(extractedFirmwareFolder)
         checkPasswords.run()
         self.analysisResult.append(checkPasswords.result)
@@ -49,12 +49,12 @@ class AnalyzerMain:
         checkBinVersions.run()
         self.analysisResult.append(checkBinVersions.result)
 	
-	#Run AVScanFirmware module
-	scanFirmware = AVScanFirmware(self.imageFile, extractedFirmwareFolder)
-	scanFirmware.run()
-	self.analysisResult.append(scanFirmware.result) 
+        #Run AVScanFirmware module
+        scanFirmware = AVScanFirmware(self.imageFile, extractedFirmwareFolder)
+        scanFirmware.run()
+        self.analysisResult.append(scanFirmware.result) 
 
-	#Run ScanIP module
-	scanIPAdd = ScanIP(extractedFirmwareFolder)
-	scanIPAdd.run()
+        #Run ScanIP module
+        scanIPAdd = ScanIP(extractedFirmwareFolder)
+        scanIPAdd.run()
         self.analysisResult.append(scanIPAdd.result) 

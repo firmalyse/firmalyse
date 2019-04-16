@@ -13,8 +13,6 @@ import pyclamd
 
 class AVScanFirmware:
 
-
-
     def __init__(self, imageFile, extractedFirmwareFolder):
 
         """
@@ -24,13 +22,13 @@ class AVScanFirmware:
         """
 
         self.imageFile = imageFile
-	self.extractedFirmwareFolder = extractedFirmwareFolder
-	self.result = {
-            'name': 'Scans for malware signatures of files within the firmware',
-            'description': 'Malicious firmware might contain files which are malware. \
-                            This module checks the signature of the image and components in the firmware to determine \
-                            if they are found in a virus database.',
-            'issues': []
+        self.extractedFirmwareFolder = extractedFirmwareFolder
+        self.result = {
+                'name': 'Scans for malware signatures of files within the firmware',
+                'description': 'Malicious firmware might contain files which are malware. \
+                                This module checks the signature of the image and components in the firmware to determine \
+                                if they are found in a virus database.',
+                'issues': []
         }
     
     def run(self):

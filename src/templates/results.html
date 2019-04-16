@@ -22,7 +22,7 @@
                     <tr>
                         <!-- render issue rows based on the analysis type-->
 
-                    <!-- CheckPasswords: Default Passwords -->
+                        <!-- CheckPasswords: Default Passwords -->
                         {% if issue.issueName == 'Default Passwords' and issue.Present %}
                             <td>
                                 {{ issue.issueName }}
@@ -35,7 +35,6 @@
                                     <li> {{ user }} </li>
                                 {% endfor %}
                                 </ul>
-                                </td>
                             </td>
                         {% endif %}
 
@@ -140,7 +139,7 @@
                             </td>
                         {% endif %}
 	    
-	    		<!-- AVScanFirmware: ClamAV -->
+	    		        <!-- AVScanFirmware: ClamAV -->
                         {% if issue.issueName == 'Malware' and issue.Present %}
                             <td>
                                 {{ issue.issueName }}
@@ -151,22 +150,20 @@
                         {% endif %}
 
 
-			<!-- ScanIP: Hardcoded IP -->
+			            <!-- ScanIP: Hardcoded IP -->
                         {% if issue.issueName == 'Hardcoded IPs' and issue.Present %}
                             <td>
                                 {{ issue.issueName }}
                             </td>
                             <td>
-			    <ul class="list-unstyled">
+			                <ul class="list-unstyled">
+                            {% for ip in issue.List %}
 
-				{% for ip in issue.List %}
+                                <li> {{ ip }} </li>
 
-					<li> {{ ip }} </li>
-
-				{% endfor %}
-
-			    </ul>
-			    </td>
+                            {% endfor %}
+                            </ul>
+                            </td>
                         {% endif %}
                         
                     </tr>
