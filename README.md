@@ -9,6 +9,10 @@ Firmalyse is an automated firmware analysis tool that aims to provide an easy to
 * ``git clone https://github.com/fevttys0/sasquatch; cd sasquatch``
 * ``./build.sh``
 
+Install ``ClamAV`` and its Python bindings
+* ``sudo apt-get install clamav clamav-daemon clamav-freshclam``
+* ``pip install pyclamd``
+
 ``john`` also needs to be installed
 * ``sudo apt install john``
 
@@ -20,7 +24,11 @@ Install ``eslint`` using npm
 * ``cd firmalyse``
 * ``git clone https://github.com/craigz28/firmwalker``
 
-To start, run ``python firmalyse.py``
+## Usage
+To start, ClamAV daemon needs to be running.
+* ``systemctl start clamav-daemon``
+
+Finally, run ``python firmalyse.py`` to start.
 
 ## Acknowledgements
 Firmalyse is build on top of the following tools:
