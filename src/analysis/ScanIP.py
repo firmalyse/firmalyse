@@ -29,7 +29,7 @@ class ScanIP:
         
 	issues = {'issueName': 'Hardcoded IPs', 'Present': False, 'List': []}
 
-	IPAddressPath = "./analysis/IPAddresses.txt"
+	IPAddressPath = "./analysis/data/IPAddresses.txt"
         #Following needs to be changed if necessary
         FirmwalkerOutput = "./analysis_result/firmwalkerOutput.txt"
         #Can optimise by only looking at IP Addresses of Firmwalker Output
